@@ -1,15 +1,29 @@
 /**
- * Swastik Medical Store - Management System Engine (Indian Localization)
- * Fully featured JavaScript application with INR (₹) currency & Indian supplier/medicine seed data.
+ * ============================================================================
+ * SWASTIK MEDICAL STORE - MANAGEMENT SYSTEM ENGINE
+ * Location: Bidupur Bazar, Vaishali, Bihar
+ * ============================================================================
+ * This JavaScript file controls all application logic, including:
+ * 1. Medicine stock management (Add, Delete, Filter, Low Stock Alerts)
+ * 2. Supplier & Wholesaler directory
+ * 3. Point of Sale (POS) counter for creating bills & deducting stock
+ * 4. Automatic LocalStorage saving (data stays saved even if browser closes)
+ * 5. GST Receipt printing & Financial analytics
+ * ============================================================================
  */
 
-// Initial Seed Data (Indian Context)
+/* ============================================================================
+   SECTION 1: DEFAULT SAMPLE DATA (Pre-loaded medicines & suppliers)
+   ============================================================================ */
+
+// List of default wholesalers/suppliers in Bihar
 const SEED_SUPPLIERS = [
   { id: "SUP-001", name: "Sun Pharma Distributors", contactPerson: "Rajesh Kumar", phone: "+91-9876543210", email: "orders@sunpharma.in", address: "Plot 12, Industrial Area, Patna, Bihar" },
   { id: "SUP-002", name: "Cipla Healthcare India", contactPerson: "Amit Sharma", phone: "+91-9812345678", email: "sales@ciplaindia.com", address: "Exhibition Road, Patna, Bihar" },
   { id: "SUP-003", name: "Mankind Pharma Supplies", contactPerson: "Pankaj Verma", phone: "+91-9934567890", email: "distributors@mankindpharma.in", address: "Station Road, Hajipur, Vaishali, Bihar" }
 ];
 
+// List of default initial medicines in stock
 const SEED_MEDICINES = [
   { id: "MED-001", name: "Amoxicillin 500mg", genericName: "Amoxicillin", category: "Capsule", supplierId: "SUP-001", batchNumber: "AMX2026A", purchaseDate: "2025-01-10", expiryDate: "2027-06-30", purchasePrice: 45.00, sellingPrice: 75.00, quantity: 150, rackLocation: "Rack A-01" },
   { id: "MED-002", name: "Dolo 650mg", genericName: "Paracetamol", category: "Tablet", supplierId: "SUP-002", batchNumber: "PAR2025B", purchaseDate: "2025-03-15", expiryDate: "2028-02-28", purchasePrice: 15.00, sellingPrice: 30.00, quantity: 300, rackLocation: "Rack A-02" },
@@ -21,9 +35,15 @@ const SEED_MEDICINES = [
   { id: "MED-008", name: "Betnovate-N Cream 20g", genericName: "Betamethasone & Neomycin", category: "Ointment", supplierId: "SUP-002", batchNumber: "HYD2026H", purchaseDate: "2025-01-15", expiryDate: "2027-01-15", purchasePrice: 35.00, sellingPrice: 60.00, quantity: 60, rackLocation: "Rack D-01" }
 ];
 
+// Default invoices (starts empty at ₹0.00 sales)
 const SEED_INVOICES = [];
 
-// App State
+
+/* ============================================================================
+   SECTION 2: APPLICATION STATE & LOCAL STORAGE SAVING
+   ============================================================================ */
+
+// Main app state object holding active data in memory
 let state = {
   suppliers: [],
   medicines: [],
@@ -33,7 +53,7 @@ let state = {
   searchQuery: ''
 };
 
-// Initialize State
+// Initialize state from browser LocalStorage (or load defaults)
 function initState() {
   const isZeroSales = localStorage.getItem('swastik_zero_sales_v2');
   if (!isZeroSales) {
@@ -52,18 +72,25 @@ function initState() {
   saveState();
 }
 
+// Save current memory state to browser LocalStorage automatically
 function saveState() {
   localStorage.setItem('pharma_suppliers', JSON.stringify(state.suppliers));
   localStorage.setItem('pharma_medicines', JSON.stringify(state.medicines));
   localStorage.setItem('pharma_invoices', JSON.stringify(state.invoices));
 }
 
-// Utility Functions
+
+/* ============================================================================
+   SECTION 3: HELPER UTILITIES & CURRENCY FORMATTER
+   ============================================================================ */
+
+// Check if a medicine expiry date has passed today
 function isExpired(expiryDateStr) {
   const today = new Date().toISOString().split('T')[0];
   return expiryDateStr < today;
 }
 
+// Check if a medicine expires within the next 90 days
 function isExpiringSoon(expiryDateStr) {
   const today = new Date();
   const expDate = new Date(expiryDateStr);
@@ -71,11 +98,17 @@ function isExpiringSoon(expiryDateStr) {
   return diffDays >= 0 && diffDays <= 90;
 }
 
+// Format numbers into Indian Rupee format (e.g., 75.00 -> ₹75.00)
 function formatCurrency(amount) {
   return '₹' + Number(amount).toFixed(2);
 }
 
-// UI Render Engine
+
+/* ============================================================================
+   SECTION 4: UI RENDERING FUNCTIONS (Updates web page HTML automatically)
+   ============================================================================ */
+
+// Master render function - refreshes all screens
 function renderApp() {
   renderMetrics();
   renderInventoryTable();
@@ -85,6 +118,7 @@ function renderApp() {
   populateInvoiceMedicineSelects();
 }
 
+// Render top summary dashboard metric cards (Total Stock, Low Stock, Expired, Sales)
 function renderMetrics() {
   const totalMeds = state.medicines.length;
   const lowStockCount = state.medicines.filter(m => m.quantity < 10).length;
@@ -99,6 +133,7 @@ function renderMetrics() {
   document.getElementById('metric-total-sales').textContent = formatCurrency(totalRevenue);
 }
 
+// Render Medicine Inventory Table with search & filter logic
 function renderInventoryTable() {
   const tbody = document.getElementById('inventory-tbody');
   if (!tbody) return;
@@ -138,24 +173,25 @@ function renderInventoryTable() {
       <tr>
         <td><strong>${m.id}</strong></td>
         <td>
-          <div style="font-weight: 600;">${m.name}</div>
-          <div style="font-size: 0.76rem; color: var(--text-dim);">${m.genericName}</div>
+          <div style="font-weight: 700; color: var(--apollo-navy);">${m.name}</div>
+          <div style="font-size: 0.78rem; color: var(--text-muted);">${m.genericName}</div>
         </td>
         <td><span class="badge badge-info">${m.category}</span></td>
         <td>${m.batchNumber}</td>
         <td>${m.expiryDate} ${statusBadge}</td>
         <td>${formatCurrency(m.purchasePrice)}</td>
-        <td><strong>${formatCurrency(m.sellingPrice)}</strong></td>
+        <td><strong style="color: var(--primary);">${formatCurrency(m.sellingPrice)}</strong></td>
         <td><strong style="color: ${lowStock ? 'var(--accent-red)' : 'inherit'};">${m.quantity}</strong></td>
         <td>${m.rackLocation}</td>
         <td>
-          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteMedicine('${m.id}')">Delete</button>
+          <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteMedicine('${m.id}')">Delete</button>
         </td>
       </tr>
     `;
   }).join('');
 }
 
+// Render Wholesaler / Supplier Directory Table
 function renderSuppliersTable() {
   const tbody = document.getElementById('suppliers-tbody');
   if (!tbody) return;
@@ -174,12 +210,13 @@ function renderSuppliersTable() {
       <td>${s.email}</td>
       <td>${s.address}</td>
       <td>
-        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteSupplier('${s.id}')">Delete</button>
+        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteSupplier('${s.id}')">Delete</button>
       </td>
     </tr>
   `).join('');
 }
 
+// Render Sales Invoice History Table
 function renderInvoicesTable() {
   const tbody = document.getElementById('invoices-tbody');
   if (!tbody) return;
@@ -204,6 +241,7 @@ function renderInvoicesTable() {
   `).join('');
 }
 
+// Render Financial & Inventory Valuation Reports
 function renderReports() {
   const reportContent = document.getElementById('report-analytics-container');
   if (!reportContent) return;
@@ -217,21 +255,21 @@ function renderReports() {
       <div class="metric-card">
         <div class="metric-icon-box blue">📊</div>
         <div class="metric-info">
-          <span class="metric-label">Inventory Purchase Value</span>
+          <span class="metric-label">Total Stock Investment</span>
           <span class="metric-value">${formatCurrency(totalInvValuation)}</span>
         </div>
       </div>
       <div class="metric-card">
         <div class="metric-icon-box green">💰</div>
         <div class="metric-info">
-          <span class="metric-label">Inventory Retail Potential</span>
+          <span class="metric-label">Retail Potential Value</span>
           <span class="metric-value">${formatCurrency(totalInvRetailVal)}</span>
         </div>
       </div>
       <div class="metric-card">
         <div class="metric-icon-box purple">📈</div>
         <div class="metric-info">
-          <span class="metric-label">Projected Margin</span>
+          <span class="metric-label">Projected Stock Profit</span>
           <span class="metric-value">${formatCurrency(estProfitMargin)}</span>
         </div>
       </div>
@@ -239,7 +277,11 @@ function renderReports() {
   `;
 }
 
-// Human-Friendly Toast Notification System
+
+/* ============================================================================
+   SECTION 5: NOTIFICATION SYSTEM (Floating Toast Messages)
+   ============================================================================ */
+
 function showToast(message, type = 'success') {
   const container = document.getElementById('toast-container');
   if (!container) return;
@@ -261,7 +303,11 @@ function showToast(message, type = 'success') {
   }, 4000);
 }
 
-// Operations & Handlers
+
+/* ============================================================================
+   SECTION 6: INVENTORY & SUPPLIER OPERATIONS (Add & Delete Handlers)
+   ============================================================================ */
+
 function deleteMedicine(id) {
   if (confirm(`Are you sure you want to delete Medicine ${id}?`)) {
     state.medicines = state.medicines.filter(m => m.id !== id);
@@ -280,7 +326,6 @@ function deleteSupplier(id) {
   }
 }
 
-// Modal Handlers
 function openModal(id) {
   document.getElementById(id).classList.add('open');
 }
@@ -289,7 +334,7 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('open');
 }
 
-// Add Medicine Form
+// Add New Medicine Form Handler
 function handleAddMedicineSubmit(e) {
   e.preventDefault();
   const newMed = {
@@ -315,7 +360,7 @@ function handleAddMedicineSubmit(e) {
   showToast(`Medicine "${newMed.name}" added to stock! 💊`, 'success');
 }
 
-// Add Supplier Form
+// Add New Supplier Form Handler
 function handleAddSupplierSubmit(e) {
   e.preventDefault();
   const newSup = {
@@ -335,9 +380,14 @@ function handleAddSupplierSubmit(e) {
   showToast(`Supplier "${newSup.name}" added to directory! 🚚`, 'success');
 }
 
-// POS Counter Engine
+
+/* ============================================================================
+   SECTION 7: POINT OF SALE (POS) BILLING & CART ENGINE
+   ============================================================================ */
+
 let posCart = [];
 
+// Populate POS dropdown with available in-stock medicines
 function populateInvoiceMedicineSelects() {
   const supSelect = document.getElementById('med-supplier');
   if (supSelect) {
@@ -357,6 +407,7 @@ function populateInvoiceMedicineSelects() {
   }
 }
 
+// Add selected medicine to current POS bill cart
 function addItemToPosCart() {
   const medSelect = document.getElementById('pos-medicine-select');
   const qtyInput = document.getElementById('pos-qty-input');
@@ -401,6 +452,7 @@ function addItemToPosCart() {
   showToast(`Added ${qty}x "${med.name}" to bill! 🛒`, "success");
 }
 
+// Remove an item row from POS cart
 function removePosCartItem(index) {
   const item = posCart[index];
   posCart.splice(index, 1);
@@ -408,6 +460,7 @@ function removePosCartItem(index) {
   if (item) showToast(`Removed "${item.name}" from bill`, "info");
 }
 
+// Render active POS cart items table
 function renderPosCart() {
   const tbody = document.getElementById('pos-cart-tbody');
   if (!tbody) return;
@@ -432,6 +485,7 @@ function renderPosCart() {
   calculatePosTotals();
 }
 
+// Calculate subtotal, GST %, discount %, and grand total
 function calculatePosTotals() {
   const subtotal = posCart.reduce((sum, item) => sum + item.total, 0);
   const gstRate = parseFloat(document.getElementById('pos-gst-input')?.value || 0);
@@ -447,6 +501,7 @@ function calculatePosTotals() {
   return { subtotal, gstRate, discountRate, gstAmount, discountAmount, grandTotal };
 }
 
+// Complete sale: deduct stock, save invoice, and show printable receipt
 function completePosSale() {
   if (posCart.length === 0) {
     showToast("Your bill is empty! Select a medicine to add to bill.", "warning");
@@ -502,6 +557,11 @@ function completePosSale() {
   viewInvoiceReceipt(newInvoiceId);
 }
 
+
+/* ============================================================================
+   SECTION 8: INVOICE RECEIPT VIEWER
+   ============================================================================ */
+
 function viewInvoiceReceipt(id) {
   const inv = state.invoices.find(i => i.id === id);
   if (!inv) return;
@@ -553,7 +613,11 @@ function viewInvoiceReceipt(id) {
   openModal('modal-view-receipt');
 }
 
-// Switch Tabs
+
+/* ============================================================================
+   SECTION 9: NAVIGATION & EVENT LISTENERS
+   ============================================================================ */
+
 function switchTab(tabId) {
   state.activeTab = tabId;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -566,21 +630,21 @@ function switchTab(tabId) {
   if (panelEl) panelEl.classList.add('active');
 
   const titleMap = {
-    'dashboard': 'Executive Dashboard',
-    'inventory': 'Medicine Inventory',
-    'suppliers': 'Supplier Directory',
-    'sales': 'Sales & Invoicing',
-    'reports': 'Analytics & Financial Reports'
+    'dashboard': 'Home Overview',
+    'inventory': 'Medicine Stock',
+    'suppliers': 'Suppliers & Wholesalers',
+    'sales': 'Billing & New Sale',
+    'reports': 'Sales & Profit Reports'
   };
-  document.getElementById('page-title').textContent = titleMap[tabId] || 'Dashboard';
+  document.getElementById('page-title').textContent = titleMap[tabId] || 'Home Overview';
 }
 
-// Global Event Listeners
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
   initState();
   renderApp();
 
-  // Navigation Click Handlers
+  // Sidebar navigation handlers
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
@@ -589,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Search Box Listener
+  // Global search input
   const searchInput = document.getElementById('global-search');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
@@ -598,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Inventory Filter Listener
+  // Inventory filter dropdown
   const invFilter = document.getElementById('inventory-filter-select');
   if (invFilter) {
     invFilter.addEventListener('change', (e) => {
@@ -607,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Form Submissions
+  // Form submission bindings
   const formMed = document.getElementById('form-add-medicine');
   if (formMed) formMed.addEventListener('submit', handleAddMedicineSubmit);
 

@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Swastik Medical Store</title>
-  <meta name="description"
-    content="Comprehensive Medical Store & Pharmacy Inventory Management System built with modern web technologies.">
-
-  <!-- Fonts -->
+  <title>Swastik Pharmacy - Medical Store Management System</title>
+  <meta name="description" content="Comprehensive Medical Store & Pharmacy Inventory Management System for Swastik Medical Store, Bidupur Bazar, Vaishali, Bihar.">
+  
+  <!-- Modern Google Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet">
-
-  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
 
-  <!-- Sidebar Navigation -->
+  <!-- =========================================================================
+       SIDEBAR NAVIGATION BAR
+       ========================================================================= -->
   <aside class="sidebar">
+    <!-- Store Logo & Brand Header -->
     <div class="brand">
       <div class="brand-icon">🏥</div>
       <div>
@@ -30,6 +29,7 @@
       </div>
     </div>
 
+    <!-- Navigation Menu Buttons -->
     <nav class="nav-menu">
       <a href="#" class="nav-item active" data-tab="dashboard">
         <span class="nav-icon">🏠</span>
@@ -53,6 +53,7 @@
       </a>
     </nav>
 
+    <!-- Sidebar Footer -->
     <div class="sidebar-footer">
       <div>Store Status: <span style="color: var(--accent-green); font-weight: 700;">● Ready for Sales</span></div>
       <div style="margin-top: 4px; font-weight: 600; color: #F26522;">✓ 100% Genuine Medicines</div>
@@ -60,9 +61,11 @@
     </div>
   </aside>
 
-  <!-- Main Wrapper -->
+  <!-- =========================================================================
+       MAIN WRAPPER & TOP BAR
+       ========================================================================= -->
   <main class="main-wrapper">
-    <!-- Top Header Bar -->
+    <!-- Top Header Bar with Live Search & Fast Action Buttons -->
     <header class="top-bar">
       <h1 id="page-title" class="page-header-title">Home Overview</h1>
 
@@ -78,8 +81,10 @@
 
     <!-- Main Content Container -->
     <div class="content-container">
-
-      <!-- TAB 1: EXECUTIVE DASHBOARD -->
+      
+      <!-- =======================================================================
+           TAB 1: HOME OVERVIEW & DASHBOARD METRICS
+           ======================================================================= -->
       <section id="tab-dashboard" class="tab-panel active">
         <!-- Welcome Greeting Banner -->
         <div class="welcome-banner">
@@ -93,7 +98,7 @@
           </div>
         </div>
 
-        <!-- Metric Cards -->
+        <!-- Metric Summary Cards Grid -->
         <div class="metrics-grid">
           <div class="metric-card">
             <div class="metric-icon-box blue">💊</div>
@@ -102,7 +107,7 @@
               <span id="metric-total-meds" class="metric-value">0</span>
             </div>
           </div>
-
+          
           <div class="metric-card">
             <div class="metric-icon-box yellow">⚠️</div>
             <div class="metric-info">
@@ -110,7 +115,7 @@
               <span id="metric-low-stock" class="metric-value">0</span>
             </div>
           </div>
-
+          
           <div class="metric-card">
             <div class="metric-icon-box red">⏳</div>
             <div class="metric-info">
@@ -118,7 +123,7 @@
               <span id="metric-expired" class="metric-value">0</span>
             </div>
           </div>
-
+          
           <div class="metric-card">
             <div class="metric-icon-box purple">🚚</div>
             <div class="metric-info">
@@ -126,17 +131,17 @@
               <span id="metric-total-suppliers" class="metric-value">0</span>
             </div>
           </div>
-
+          
           <div class="metric-card">
             <div class="metric-icon-box green">💰</div>
             <div class="metric-info">
               <span class="metric-label">Total Gross Sales</span>
-              <span id="metric-total-sales" class="metric-value">$0.00</span>
+              <span id="metric-total-sales" class="metric-value">₹0.00</span>
             </div>
           </div>
         </div>
 
-        <!-- Inventory Preview Table -->
+        <!-- Critical Inventory Table -->
         <div class="section-action-header">
           <h2 class="section-title">Critical Inventory Overview</h2>
           <button class="btn btn-secondary" onclick="switchTab('inventory')">View All Medicines →</button>
@@ -159,13 +164,15 @@
               </tr>
             </thead>
             <tbody id="inventory-tbody">
-              <!-- Rendered via JS -->
+              <!-- Rendered dynamically by JavaScript -->
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- TAB 2: MEDICINE INVENTORY -->
+      <!-- =======================================================================
+           TAB 2: MEDICINE STOCK CATALOG
+           ======================================================================= -->
       <section id="tab-inventory" class="tab-panel">
         <div class="section-action-header">
           <h2 class="section-title">Medicine Catalog & Stock Control</h2>
@@ -203,7 +210,9 @@
         </div>
       </section>
 
-      <!-- TAB 3: SUPPLIERS -->
+      <!-- =======================================================================
+           TAB 3: SUPPLIERS & WHOLESALERS
+           ======================================================================= -->
       <section id="tab-suppliers" class="tab-panel">
         <div class="section-action-header">
           <h2 class="section-title">Pharmaceutical Supplier Directory</h2>
@@ -224,15 +233,17 @@
               </tr>
             </thead>
             <tbody id="suppliers-tbody">
-              <!-- Rendered via JS -->
+              <!-- Rendered dynamically by JavaScript -->
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- TAB 4: SALES & INVOICES -->
+      <!-- =======================================================================
+           TAB 4: BILLING & POINT OF SALE (POS) COUNTER
+           ======================================================================= -->
       <section id="tab-sales" class="tab-panel">
-        <!-- Point of Sale (POS) Counter -->
+        <!-- Point of Sale (POS) Counter Card -->
         <div class="pos-card">
           <h2 class="section-title" style="color: var(--primary);">🛒 Point of Sale (POS) - Create New Bill</h2>
           
@@ -255,11 +266,11 @@
               </div>
 
               <!-- Add Medicine to Bill Bar -->
-              <div style="background-color: var(--bg-dark); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 12px; align-items: flex-end;">
+              <div style="background-color: #F8FAFC; padding: 16px; border-radius: var(--radius-md); border: 1.5px solid var(--border-color); display: flex; gap: 12px; align-items: flex-end;">
                 <div class="form-group" style="flex: 2;">
                   <label>Select Medicine from Stock *</label>
                   <select id="pos-medicine-select">
-                    <!-- Options populated via JS -->
+                    <!-- Options populated dynamically by JavaScript -->
                   </select>
                 </div>
                 <div class="form-group" style="flex: 1;">
@@ -291,7 +302,7 @@
 
             <!-- Right Side: Billing Summary & Payment -->
             <div class="pos-billing-summary">
-              <h3 style="font-size: 1.05rem; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Bill Summary</h3>
+              <h3 style="font-size: 1.05rem; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; color: var(--apollo-navy);">Bill Summary</h3>
               
               <div class="pos-summary-row">
                 <span>Subtotal:</span>
@@ -338,27 +349,31 @@
               </tr>
             </thead>
             <tbody id="invoices-tbody">
-              <!-- Rendered via JS -->
+              <!-- Rendered dynamically by JavaScript -->
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- TAB 5: FINANCIAL REPORTS -->
+      <!-- =======================================================================
+           TAB 5: SALES & PROFIT REPORTS
+           ======================================================================= -->
       <section id="tab-reports" class="tab-panel">
         <div class="section-action-header">
           <h2 class="section-title">Financial & Inventory Analytics</h2>
         </div>
 
         <div id="report-analytics-container">
-          <!-- Rendered via JS -->
+          <!-- Rendered dynamically by JavaScript -->
         </div>
       </section>
 
     </div>
   </main>
 
-  <!-- MODAL 1: ADD MEDICINE -->
+  <!-- =========================================================================
+       MODAL 1: ADD MEDICINE DIALOG
+       ========================================================================= -->
   <div id="modal-add-medicine" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -431,7 +446,9 @@
     </div>
   </div>
 
-  <!-- MODAL 2: ADD SUPPLIER -->
+  <!-- =========================================================================
+       MODAL 2: ADD SUPPLIER DIALOG
+       ========================================================================= -->
   <div id="modal-add-supplier" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
@@ -443,23 +460,23 @@
           <div class="form-grid">
             <div class="form-group full">
               <label>Company Name *</label>
-              <input type="text" id="sup-name" required placeholder="e.g. Apex Pharma Solutions">
+              <input type="text" id="sup-name" required placeholder="e.g. Sun Pharma Distributors">
             </div>
             <div class="form-group">
               <label>Contact Person *</label>
-              <input type="text" id="sup-contact" required placeholder="e.g. Robert Jenkins">
+              <input type="text" id="sup-contact" required placeholder="e.g. Rajesh Kumar">
             </div>
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="tel" id="sup-phone" required placeholder="+1-555-0142">
+              <input type="tel" id="sup-phone" required placeholder="+91-9876543210">
             </div>
             <div class="form-group full">
               <label>Email Address</label>
-              <input type="email" id="sup-email" placeholder="orders@apexpharma.com">
+              <input type="email" id="sup-email" placeholder="orders@sunpharma.in">
             </div>
             <div class="form-group full">
               <label>Physical Address</label>
-              <input type="text" id="sup-address" placeholder="45 Industrial Pkwy, Boston, MA">
+              <input type="text" id="sup-address" placeholder="Plot 12, Industrial Area, Patna, Bihar">
             </div>
           </div>
         </div>
@@ -471,7 +488,9 @@
     </div>
   </div>
 
-  <!-- MODAL 3: RECEIPT VIEWER -->
+  <!-- =========================================================================
+       MODAL 3: PRINTABLE RECEIPT VIEWER
+       ========================================================================= -->
   <div id="modal-view-receipt" class="modal-overlay">
     <div class="modal-card" style="max-width: 540px;">
       <div class="modal-header">
@@ -480,7 +499,7 @@
       </div>
       <div class="modal-body">
         <div id="receipt-content-box" class="receipt-box">
-          <!-- Populated via JS -->
+          <!-- Rendered dynamically by JavaScript -->
         </div>
       </div>
       <div class="modal-footer">
@@ -490,11 +509,10 @@
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
+  <!-- Toast Notification Floating Container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Scripts -->
+  <!-- JavaScript App Logic -->
   <script src="js/app.js"></script>
 </body>
-
 </html>
