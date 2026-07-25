@@ -6,6 +6,15 @@
   <title>Swastik Pharmacy - Medical Store Management System</title>
   <meta name="description" content="Comprehensive Medical Store & Pharmacy Inventory Management System for Swastik Medical Store, Bidupur Bazar, Vaishali, Bihar.">
   
+  <!-- Android PWA App Manifest & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#002A54">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Swastik Pharmacy">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
   <!-- Modern Google Font: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -514,5 +523,16 @@
 
   <!-- JavaScript App Logic -->
   <script src="js/app.js"></script>
+
+  <!-- Android PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('Swastik Medical Store Android App Service Worker Registered!'))
+          .catch(err => console.log('Service Worker Failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>

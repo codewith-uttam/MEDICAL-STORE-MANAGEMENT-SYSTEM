@@ -1,0 +1,25 @@
+{
+  "short_name": "SwastikMed",
+  "name": "Swastik Medical Store & Pharmacy",
+  "description": "Android App for Swastik Medical Store, Bidupur Bazar, Vaishali",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#002A54",
+  "theme_color": "#002A54",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/"
+}
