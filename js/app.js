@@ -21,25 +21,7 @@ const SEED_MEDICINES = [
   { id: "MED-008", name: "Betnovate-N Cream 20g", genericName: "Betamethasone & Neomycin", category: "Ointment", supplierId: "SUP-002", batchNumber: "HYD2026H", purchaseDate: "2025-01-15", expiryDate: "2027-01-15", purchasePrice: 35.00, sellingPrice: 60.00, quantity: 60, rackLocation: "Rack D-01" }
 ];
 
-const SEED_INVOICES = [
-  {
-    id: "INV-0001",
-    date: "2026-07-20 14:30:00",
-    customerName: "Rahul Kumar",
-    customerPhone: "+91-9835012345",
-    doctorName: "Dr. A.K. Singh (MBBS, MD)",
-    subtotal: 180.00,
-    taxRate: 5.0,
-    discountRate: 5.0,
-    taxAmount: 9.00,
-    discountAmount: 9.00,
-    grandTotal: 180.00,
-    items: [
-      { medicineId: "MED-001", name: "Amoxicillin 500mg", batchNumber: "AMX2026A", quantity: 2, unitPrice: 75.00, total: 150.00 },
-      { medicineId: "MED-002", name: "Dolo 650mg", batchNumber: "PAR2025B", quantity: 1, unitPrice: 30.00, total: 30.00 }
-    ]
-  }
-];
+const SEED_INVOICES = [];
 
 // App State
 let state = {
@@ -53,12 +35,10 @@ let state = {
 
 // Initialize State
 function initState() {
-  const isIndianFormat = localStorage.getItem('swastik_indian_v1');
-  if (!isIndianFormat) {
-    localStorage.removeItem('pharma_suppliers');
-    localStorage.removeItem('pharma_medicines');
+  const isZeroSales = localStorage.getItem('swastik_zero_sales_v2');
+  if (!isZeroSales) {
     localStorage.removeItem('pharma_invoices');
-    localStorage.setItem('swastik_indian_v1', 'true');
+    localStorage.setItem('swastik_zero_sales_v2', 'true');
   }
 
   const savedSuppliers = localStorage.getItem('pharma_suppliers');
@@ -67,7 +47,7 @@ function initState() {
 
   state.suppliers = savedSuppliers ? JSON.parse(savedSuppliers) : [...SEED_SUPPLIERS];
   state.medicines = savedMedicines ? JSON.parse(savedMedicines) : [...SEED_MEDICINES];
-  state.invoices = savedInvoices ? JSON.parse(savedInvoices) : [...SEED_INVOICES];
+  state.invoices = savedInvoices ? JSON.parse(savedInvoices) : [];
 
   saveState();
 }
@@ -203,6 +183,11 @@ function renderSuppliersTable() {
 function renderInvoicesTable() {
   const tbody = document.getElementById('invoices-tbody');
   if (!tbody) return;
+
+  if (state.invoices.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">No sales invoices generated yet. Use the New Sale counter above to create your first bill!</td></tr>`;
+    return;
+  }
 
   tbody.innerHTML = state.invoices.map(inv => `
     <tr>
