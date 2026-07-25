@@ -254,12 +254,35 @@ function renderReports() {
   `;
 }
 
+// Human-Friendly Toast Notification System
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const icons = {
+    success: '✅',
+    warning: '⚠️',
+    danger: '🚨',
+    info: 'ℹ️'
+  };
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> <span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+}
+
 // Operations & Handlers
 function deleteMedicine(id) {
   if (confirm(`Are you sure you want to delete Medicine ${id}?`)) {
     state.medicines = state.medicines.filter(m => m.id !== id);
     saveState();
     renderApp();
+    showToast(`Medicine ${id} removed from stock`, 'warning');
   }
 }
 
@@ -268,6 +291,7 @@ function deleteSupplier(id) {
     state.suppliers = state.suppliers.filter(s => s.id !== id);
     saveState();
     renderApp();
+    showToast(`Supplier ${id} removed`, 'warning');
   }
 }
 
@@ -303,6 +327,7 @@ function handleAddMedicineSubmit(e) {
   renderApp();
   closeModal('modal-add-medicine');
   e.target.reset();
+  showToast(`Medicine "${newMed.name}" added to stock! 💊`, 'success');
 }
 
 // Add Supplier Form
@@ -322,6 +347,7 @@ function handleAddSupplierSubmit(e) {
   renderApp();
   closeModal('modal-add-supplier');
   e.target.reset();
+  showToast(`Supplier "${newSup.name}" added to directory! 🚚`, 'success');
 }
 
 // POS Counter Engine
@@ -351,7 +377,7 @@ function addItemToPosCart() {
   const qtyInput = document.getElementById('pos-qty-input');
   
   if (!medSelect || !medSelect.value) {
-    alert("Please select a valid medicine in stock!");
+    showToast("Please select a valid medicine in stock!", "warning");
     return;
   }
   
@@ -362,7 +388,7 @@ function addItemToPosCart() {
   if (!med) return;
 
   if (qty > med.quantity) {
-    alert(`Insufficient stock! Only ${med.quantity} units of ${med.name} are available.`);
+    showToast(`Insufficient stock! Only ${med.quantity} units of ${med.name} available.`, "danger");
     return;
   }
 
@@ -370,7 +396,7 @@ function addItemToPosCart() {
   if (existingItemIndex > -1) {
     const newQty = posCart[existingItemIndex].quantity + qty;
     if (newQty > med.quantity) {
-      alert(`Cannot add more. Total in cart (${newQty}) exceeds available stock (${med.quantity}).`);
+      showToast(`Cannot add more. Total in cart (${newQty}) exceeds stock (${med.quantity}).`, "danger");
       return;
     }
     posCart[existingItemIndex].quantity = newQty;
@@ -387,11 +413,14 @@ function addItemToPosCart() {
   }
 
   renderPosCart();
+  showToast(`Added ${qty}x "${med.name}" to bill! 🛒`, "success");
 }
 
 function removePosCartItem(index) {
+  const item = posCart[index];
   posCart.splice(index, 1);
   renderPosCart();
+  if (item) showToast(`Removed "${item.name}" from bill`, "info");
 }
 
 function renderPosCart() {
@@ -435,7 +464,7 @@ function calculatePosTotals() {
 
 function completePosSale() {
   if (posCart.length === 0) {
-    alert("Your bill is empty! Add at least one medicine to complete the sale.");
+    showToast("Your bill is empty! Select a medicine to add to bill.", "warning");
     return;
   }
 
@@ -481,6 +510,8 @@ function completePosSale() {
   
   // Re-render UI
   renderApp();
+
+  showToast(`Bill ${newInvoiceId} created & stock updated! 🎉`, "success");
 
   // Show Printable Receipt Modal
   viewInvoiceReceipt(newInvoiceId);

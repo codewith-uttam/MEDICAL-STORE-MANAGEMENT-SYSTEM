@@ -649,6 +649,72 @@ body {
   margin-top: 6px;
 }
 
+/* Human-Friendly Toast Notification Container */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.toast {
+  background-color: var(--bg-card);
+  border: 1px solid var(--primary);
+  color: var(--text-main);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  pointer-events: auto;
+  animation: slideInRight 0.3s ease, fadeOut 0.5s ease 3.5s forwards;
+}
+
+.toast.success { border-color: var(--accent-green); background-color: #064e3b; color: #ecfdf5; }
+.toast.warning { border-color: var(--accent-yellow); background-color: #78350f; color: #fffbeb; }
+.toast.danger { border-color: var(--accent-red); background-color: #7f1d1d; color: #fef2f2; }
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* Welcome Greeting Banner */
+.welcome-banner {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.welcome-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.welcome-sub {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
 /* Responsive */
 @media (max-width: 992px) {
   .sidebar { transform: translateX(-100%); }
@@ -657,4 +723,5 @@ body {
   .form-grid { grid-template-columns: 1fr; }
   .form-group.full { grid-column: span 1; }
   .pos-grid-layout { grid-template-columns: 1fr; }
+  .welcome-banner { flex-direction: column; align-items: flex-start; }
 }
