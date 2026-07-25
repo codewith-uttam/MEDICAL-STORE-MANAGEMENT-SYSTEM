@@ -324,12 +324,166 @@ function handleAddSupplierSubmit(e) {
   e.target.reset();
 }
 
-// Invoice Generator Logic
+// POS Counter Engine
+let posCart = [];
+
 function populateInvoiceMedicineSelects() {
   const supSelect = document.getElementById('med-supplier');
   if (supSelect) {
     supSelect.innerHTML = state.suppliers.map(s => `<option value="${s.id}">${s.name} (${s.id})</option>`).join('');
   }
+
+  const posMedSelect = document.getElementById('pos-medicine-select');
+  if (posMedSelect) {
+    const inStock = state.medicines.filter(m => m.quantity > 0 && !isExpired(m.expiryDate));
+    if (inStock.length === 0) {
+      posMedSelect.innerHTML = `<option value="">No available medicines in stock</option>`;
+    } else {
+      posMedSelect.innerHTML = inStock.map(m => 
+        `<option value="${m.id}">${m.name} [${m.batchNumber}] - Stock: ${m.quantity} - ₹${m.sellingPrice.toFixed(2)}</option>`
+      ).join('');
+    }
+  }
+}
+
+function addItemToPosCart() {
+  const medSelect = document.getElementById('pos-medicine-select');
+  const qtyInput = document.getElementById('pos-qty-input');
+  
+  if (!medSelect || !medSelect.value) {
+    alert("Please select a valid medicine in stock!");
+    return;
+  }
+  
+  const medId = medSelect.value;
+  const qty = parseInt(qtyInput.value) || 1;
+  
+  const med = state.medicines.find(m => m.id === medId);
+  if (!med) return;
+
+  if (qty > med.quantity) {
+    alert(`Insufficient stock! Only ${med.quantity} units of ${med.name} are available.`);
+    return;
+  }
+
+  const existingItemIndex = posCart.findIndex(item => item.medicineId === medId);
+  if (existingItemIndex > -1) {
+    const newQty = posCart[existingItemIndex].quantity + qty;
+    if (newQty > med.quantity) {
+      alert(`Cannot add more. Total in cart (${newQty}) exceeds available stock (${med.quantity}).`);
+      return;
+    }
+    posCart[existingItemIndex].quantity = newQty;
+    posCart[existingItemIndex].total = newQty * med.sellingPrice;
+  } else {
+    posCart.push({
+      medicineId: med.id,
+      name: med.name,
+      batchNumber: med.batchNumber,
+      quantity: qty,
+      unitPrice: med.sellingPrice,
+      total: qty * med.sellingPrice
+    });
+  }
+
+  renderPosCart();
+}
+
+function removePosCartItem(index) {
+  posCart.splice(index, 1);
+  renderPosCart();
+}
+
+function renderPosCart() {
+  const tbody = document.getElementById('pos-cart-tbody');
+  if (!tbody) return;
+
+  if (posCart.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">No items added to bill yet. Select a medicine above.</td></tr>`;
+  } else {
+    tbody.innerHTML = posCart.map((item, idx) => `
+      <tr>
+        <td><strong>${item.name}</strong></td>
+        <td>${item.batchNumber}</td>
+        <td>₹${item.unitPrice.toFixed(2)}</td>
+        <td><strong>${item.quantity}</strong></td>
+        <td><strong>₹${item.total.toFixed(2)}</strong></td>
+        <td>
+          <button class="btn btn-danger" style="padding: 2px 8px; font-size: 0.74rem;" onclick="removePosCartItem(${idx})">&times;</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  calculatePosTotals();
+}
+
+function calculatePosTotals() {
+  const subtotal = posCart.reduce((sum, item) => sum + item.total, 0);
+  const gstRate = parseFloat(document.getElementById('pos-gst-input')?.value || 0);
+  const discountRate = parseFloat(document.getElementById('pos-discount-input')?.value || 0);
+
+  const gstAmount = subtotal * (gstRate / 100);
+  const discountAmount = subtotal * (discountRate / 100);
+  const grandTotal = subtotal + gstAmount - discountAmount;
+
+  document.getElementById('pos-subtotal-val').textContent = formatCurrency(subtotal);
+  document.getElementById('pos-grand-val').textContent = formatCurrency(grandTotal);
+
+  return { subtotal, gstRate, discountRate, gstAmount, discountAmount, grandTotal };
+}
+
+function completePosSale() {
+  if (posCart.length === 0) {
+    alert("Your bill is empty! Add at least one medicine to complete the sale.");
+    return;
+  }
+
+  const customerName = document.getElementById('pos-customer-name').value.trim() || 'Cash Customer';
+  const customerPhone = document.getElementById('pos-customer-phone').value.trim() || '+91-7766086408';
+  const doctorName = document.getElementById('pos-doctor-name').value.trim() || 'Self / OTC';
+
+  const totals = calculatePosTotals();
+
+  // Deduct Inventory Stock
+  posCart.forEach(cartItem => {
+    const med = state.medicines.find(m => m.id === cartItem.medicineId);
+    if (med) {
+      med.quantity -= cartItem.quantity;
+    }
+  });
+
+  const now = new Date();
+  const dateStr = now.toISOString().replace('T', ' ').substring(0, 19);
+
+  const newInvoiceId = `INV-00${state.invoices.length + 1}`;
+  const newInvoice = {
+    id: newInvoiceId,
+    date: dateStr,
+    customerName: customerName,
+    customerPhone: customerPhone,
+    doctorName: doctorName,
+    subtotal: totals.subtotal,
+    taxRate: totals.gstRate,
+    discountRate: totals.discountRate,
+    taxAmount: totals.gstAmount,
+    discountAmount: totals.discountAmount,
+    grandTotal: totals.grandTotal,
+    items: [...posCart]
+  };
+
+  state.invoices.unshift(newInvoice);
+  saveState();
+
+  // Reset Cart
+  posCart = [];
+  renderPosCart();
+  
+  // Re-render UI
+  renderApp();
+
+  // Show Printable Receipt Modal
+  viewInvoiceReceipt(newInvoiceId);
 }
 
 function viewInvoiceReceipt(id) {

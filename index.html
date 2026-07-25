@@ -70,6 +70,7 @@
           <span class="search-icon">🔍</span>
           <input type="text" id="global-search" placeholder="Search medicines, suppliers, invoices...">
         </div>
+        <button class="btn btn-secondary" onclick="switchTab('sales')" style="background-color: var(--accent-green-bg); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3);">🛒 + New Sale</button>
         <button class="btn btn-primary" onclick="openModal('modal-add-medicine')">+ Add Medicine</button>
       </div>
     </header>
@@ -218,8 +219,96 @@
 
       <!-- TAB 4: SALES & INVOICES -->
       <section id="tab-sales" class="tab-panel">
-        <div class="section-action-header">
-          <h2 class="section-title">Recent Sales Invoices</h2>
+        <!-- Point of Sale (POS) Counter -->
+        <div class="pos-card">
+          <h2 class="section-title" style="color: var(--primary);">🛒 Point of Sale (POS) - Create New Bill</h2>
+          
+          <div class="pos-grid-layout">
+            <!-- Left Side: Customer & Item Selection -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Customer Name *</label>
+                  <input type="text" id="pos-customer-name" placeholder="e.g. Rahul Kumar" value="Cash Customer">
+                </div>
+                <div class="form-group">
+                  <label>Customer Phone *</label>
+                  <input type="tel" id="pos-customer-phone" placeholder="e.g. +91-9835012345" value="+91-7766086408">
+                </div>
+                <div class="form-group full">
+                  <label>Prescribing Doctor</label>
+                  <input type="text" id="pos-doctor-name" placeholder="e.g. Dr. A.K. Singh (MBBS, MD)">
+                </div>
+              </div>
+
+              <!-- Add Medicine to Bill Bar -->
+              <div style="background-color: var(--bg-dark); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; gap: 12px; align-items: flex-end;">
+                <div class="form-group" style="flex: 2;">
+                  <label>Select Medicine from Stock *</label>
+                  <select id="pos-medicine-select">
+                    <!-- Options populated via JS -->
+                  </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                  <label>Qty to Sell *</label>
+                  <input type="number" id="pos-qty-input" min="1" value="1">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addItemToPosCart()" style="height: 42px;">+ Add Item</button>
+              </div>
+
+              <!-- Cart Items Table -->
+              <div class="card-table-wrapper" style="max-height: 220px; overflow-y: auto;">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Medicine Name</th>
+                      <th>Batch</th>
+                      <th>Price</th>
+                      <th>Qty</th>
+                      <th>Total</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pos-cart-tbody">
+                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">No items added to bill yet. Select a medicine above.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right Side: Billing Summary & Payment -->
+            <div class="pos-billing-summary">
+              <h3 style="font-size: 1.05rem; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Bill Summary</h3>
+              
+              <div class="pos-summary-row">
+                <span>Subtotal:</span>
+                <span id="pos-subtotal-val" style="font-weight: 600; color: var(--text-main);">₹0.00</span>
+              </div>
+              
+              <div class="form-group">
+                <label>GST Rate (%)</label>
+                <input type="number" id="pos-gst-input" value="5" min="0" max="28" oninput="calculatePosTotals()">
+              </div>
+              
+              <div class="form-group">
+                <label>Discount (%)</label>
+                <input type="number" id="pos-discount-input" value="0" min="0" max="100" oninput="calculatePosTotals()">
+              </div>
+
+              <div class="pos-summary-row total">
+                <span>Grand Total:</span>
+                <span id="pos-grand-val">₹0.00</span>
+              </div>
+
+              <button class="btn btn-primary" onclick="completePosSale()" style="padding: 14px; width: 100%; justify-content: center; font-size: 1rem; margin-top: 10px;">
+                ✅ Complete Sale & Print Bill
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-action-header" style="margin-top: 20px;">
+          <h2 class="section-title">Sales Invoice History</h2>
         </div>
 
         <div class="card-table-wrapper">
