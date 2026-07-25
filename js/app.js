@@ -334,8 +334,8 @@ function viewInvoiceReceipt(id) {
   container.innerHTML = `
     <div class="receipt-header">
       <h2>SWASTIK MEDICAL STORE</h2>
-      <p>100 Health Avenue, Suite 400</p>
-      <p>Tel: +1-800-SWASTIK-MED</p>
+      <p>Bidupur Bazar</p>
+      <p>Mob: +91-7766086408</p>
     </div>
     <div class="receipt-details">
       <div><strong>Invoice #:</strong> ${inv.id}</div>
