@@ -1,42 +1,42 @@
 /**
- * PharmaCare Pro - Medical Store Management System Engine
- * Fully featured JavaScript application with state management & LocalStorage persistence.
+ * Swastik Medical Store - Management System Engine (Indian Localization)
+ * Fully featured JavaScript application with INR (₹) currency & Indian supplier/medicine seed data.
  */
 
-// Initial Seed Data (Matches C++ system seed data)
+// Initial Seed Data (Indian Context)
 const SEED_SUPPLIERS = [
-  { id: "SUP-001", name: "Apex Pharma Solutions", contactPerson: "Robert Jenkins", phone: "+1-555-0142", email: "orders@apexpharma.com", address: "45 Industrial Pkwy, Boston, MA" },
-  { id: "SUP-002", name: "MediGlobal Supplies Co.", contactPerson: "Sarah Connor", phone: "+1-555-0188", email: "sales@mediglobal.com", address: "80 Medical Hub Rd, Chicago, IL" },
-  { id: "SUP-003", name: "BioHealth Care Distributors", contactPerson: "Michael Chang", phone: "+1-555-0199", email: "mchang@biohealth.org", address: "12 Science Center, San Jose, CA" }
+  { id: "SUP-001", name: "Sun Pharma Distributors", contactPerson: "Rajesh Kumar", phone: "+91-9876543210", email: "orders@sunpharma.in", address: "Plot 12, Industrial Area, Patna, Bihar" },
+  { id: "SUP-002", name: "Cipla Healthcare India", contactPerson: "Amit Sharma", phone: "+91-9812345678", email: "sales@ciplaindia.com", address: "Exhibition Road, Patna, Bihar" },
+  { id: "SUP-003", name: "Mankind Pharma Supplies", contactPerson: "Pankaj Verma", phone: "+91-9934567890", email: "distributors@mankindpharma.in", address: "Station Road, Hajipur, Vaishali, Bihar" }
 ];
 
 const SEED_MEDICINES = [
-  { id: "MED-001", name: "Amoxicillin 500mg", genericName: "Amoxicillin", category: "Tablet", supplierId: "SUP-001", batchNumber: "AMX2026A", purchaseDate: "2025-01-10", expiryDate: "2027-06-30", purchasePrice: 3.50, sellingPrice: 6.00, quantity: 150, rackLocation: "Rack A-01" },
-  { id: "MED-002", name: "Paracetamol 650mg", genericName: "Acetaminophen", category: "Tablet", supplierId: "SUP-002", batchNumber: "PAR2025B", purchaseDate: "2025-03-15", expiryDate: "2028-02-28", purchasePrice: 0.50, sellingPrice: 1.20, quantity: 300, rackLocation: "Rack A-02" },
-  { id: "MED-003", name: "Ibuprofen 400mg", genericName: "Ibuprofen", category: "Tablet", supplierId: "SUP-001", batchNumber: "IBU2025C", purchaseDate: "2024-11-20", expiryDate: "2026-12-15", purchasePrice: 1.20, sellingPrice: 2.50, quantity: 8, rackLocation: "Rack A-03" },
-  { id: "MED-004", name: "Benadryl Cough Syrup 100ml", genericName: "Diphenhydramine", category: "Syrup", supplierId: "SUP-003", batchNumber: "BEN2024D", purchaseDate: "2024-05-01", expiryDate: "2026-08-15", purchasePrice: 4.00, sellingPrice: 7.50, quantity: 45, rackLocation: "Rack B-01" },
-  { id: "MED-005", name: "Insulin Glargine 100U/ml", genericName: "Insulin", category: "Injection", supplierId: "SUP-002", batchNumber: "INS2023E", purchaseDate: "2023-09-10", expiryDate: "2025-09-10", purchasePrice: 18.00, sellingPrice: 28.00, quantity: 12, rackLocation: "Fridge 01" },
-  { id: "MED-006", name: "Omeprazole 20mg", genericName: "Omeprazole", category: "Tablet", supplierId: "SUP-001", batchNumber: "OMP2026F", purchaseDate: "2025-02-01", expiryDate: "2027-10-31", purchasePrice: 2.10, sellingPrice: 4.50, quantity: 90, rackLocation: "Rack C-02" },
-  { id: "MED-007", name: "Azithromycin 250mg", genericName: "Azithromycin", category: "Tablet", supplierId: "SUP-003", batchNumber: "AZI2025G", purchaseDate: "2025-04-10", expiryDate: "2027-04-10", purchasePrice: 5.00, sellingPrice: 9.50, quantity: 5, rackLocation: "Rack A-04" },
-  { id: "MED-008", name: "Hydrocortisone Cream 1%", genericName: "Hydrocortisone", category: "Ointment", supplierId: "SUP-002", batchNumber: "HYD2026H", purchaseDate: "2025-01-15", expiryDate: "2027-01-15", purchasePrice: 3.00, sellingPrice: 5.80, quantity: 60, rackLocation: "Rack D-01" }
+  { id: "MED-001", name: "Amoxicillin 500mg", genericName: "Amoxicillin", category: "Capsule", supplierId: "SUP-001", batchNumber: "AMX2026A", purchaseDate: "2025-01-10", expiryDate: "2027-06-30", purchasePrice: 45.00, sellingPrice: 75.00, quantity: 150, rackLocation: "Rack A-01" },
+  { id: "MED-002", name: "Dolo 650mg", genericName: "Paracetamol", category: "Tablet", supplierId: "SUP-002", batchNumber: "PAR2025B", purchaseDate: "2025-03-15", expiryDate: "2028-02-28", purchasePrice: 15.00, sellingPrice: 30.00, quantity: 300, rackLocation: "Rack A-02" },
+  { id: "MED-003", name: "Combiflam", genericName: "Ibuprofen & Paracetamol", category: "Tablet", supplierId: "SUP-001", batchNumber: "IBU2025C", purchaseDate: "2024-11-20", expiryDate: "2026-12-15", purchasePrice: 20.00, sellingPrice: 40.00, quantity: 8, rackLocation: "Rack A-03" },
+  { id: "MED-004", name: "Benadryl Cough Syrup 100ml", genericName: "Diphenhydramine", category: "Syrup", supplierId: "SUP-003", batchNumber: "BEN2024D", purchaseDate: "2024-05-01", expiryDate: "2026-08-15", purchasePrice: 65.00, sellingPrice: 115.00, quantity: 45, rackLocation: "Rack B-01" },
+  { id: "MED-005", name: "Lantus Insulin 100U/ml", genericName: "Insulin Glargine", category: "Injection", supplierId: "SUP-002", batchNumber: "INS2023E", purchaseDate: "2023-09-10", expiryDate: "2025-09-10", purchasePrice: 480.00, sellingPrice: 650.00, quantity: 12, rackLocation: "Fridge 01" },
+  { id: "MED-006", name: "Pantocid 40mg", genericName: "Pantoprazole", category: "Tablet", supplierId: "SUP-001", batchNumber: "OMP2026F", purchaseDate: "2025-02-01", expiryDate: "2027-10-31", purchasePrice: 55.00, sellingPrice: 95.00, quantity: 90, rackLocation: "Rack C-02" },
+  { id: "MED-007", name: "Azithral 500mg", genericName: "Azithromycin", category: "Tablet", supplierId: "SUP-003", batchNumber: "AZI2025G", purchaseDate: "2025-04-10", expiryDate: "2027-04-10", purchasePrice: 70.00, sellingPrice: 120.00, quantity: 5, rackLocation: "Rack A-04" },
+  { id: "MED-008", name: "Betnovate-N Cream 20g", genericName: "Betamethasone & Neomycin", category: "Ointment", supplierId: "SUP-002", batchNumber: "HYD2026H", purchaseDate: "2025-01-15", expiryDate: "2027-01-15", purchasePrice: 35.00, sellingPrice: 60.00, quantity: 60, rackLocation: "Rack D-01" }
 ];
 
 const SEED_INVOICES = [
   {
     id: "INV-0001",
     date: "2026-07-20 14:30:00",
-    customerName: "Alice Smith",
-    customerPhone: "+1-555-8899",
-    doctorName: "Dr. David Vance",
-    subtotal: 13.20,
+    customerName: "Rahul Kumar",
+    customerPhone: "+91-9835012345",
+    doctorName: "Dr. A.K. Singh (MBBS, MD)",
+    subtotal: 180.00,
     taxRate: 5.0,
     discountRate: 5.0,
-    taxAmount: 0.66,
-    discountAmount: 0.66,
-    grandTotal: 13.20,
+    taxAmount: 9.00,
+    discountAmount: 9.00,
+    grandTotal: 180.00,
     items: [
-      { medicineId: "MED-001", name: "Amoxicillin 500mg", batchNumber: "AMX2026A", quantity: 2, unitPrice: 6.00, total: 12.00 },
-      { medicineId: "MED-002", name: "Paracetamol 650mg", batchNumber: "PAR2025B", quantity: 1, unitPrice: 1.20, total: 1.20 }
+      { medicineId: "MED-001", name: "Amoxicillin 500mg", batchNumber: "AMX2026A", quantity: 2, unitPrice: 75.00, total: 150.00 },
+      { medicineId: "MED-002", name: "Dolo 650mg", batchNumber: "PAR2025B", quantity: 1, unitPrice: 30.00, total: 30.00 }
     ]
   }
 ];
@@ -53,6 +53,14 @@ let state = {
 
 // Initialize State
 function initState() {
+  const isIndianFormat = localStorage.getItem('swastik_indian_v1');
+  if (!isIndianFormat) {
+    localStorage.removeItem('pharma_suppliers');
+    localStorage.removeItem('pharma_medicines');
+    localStorage.removeItem('pharma_invoices');
+    localStorage.setItem('swastik_indian_v1', 'true');
+  }
+
   const savedSuppliers = localStorage.getItem('pharma_suppliers');
   const savedMedicines = localStorage.getItem('pharma_medicines');
   const savedInvoices = localStorage.getItem('pharma_invoices');
@@ -84,7 +92,7 @@ function isExpiringSoon(expiryDateStr) {
 }
 
 function formatCurrency(amount) {
-  return '$' + Number(amount).toFixed(2);
+  return '₹' + Number(amount).toFixed(2);
 }
 
 // UI Render Engine
@@ -219,8 +227,6 @@ function renderReports() {
   let totalInvRetailVal = state.medicines.reduce((sum, m) => sum + (m.sellingPrice * m.quantity), 0);
   let estProfitMargin = totalInvRetailVal - totalInvValuation;
 
-  let totalSales = state.invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
-
   reportContent.innerHTML = `
     <div class="metrics-grid" style="margin-bottom: 24px;">
       <div class="metric-card">
@@ -334,8 +340,8 @@ function viewInvoiceReceipt(id) {
   container.innerHTML = `
     <div class="receipt-header">
       <h2>SWASTIK MEDICAL STORE</h2>
-      <p>Bidupur Bazar</p>
-      <p>Mob: +91-7766086408</p>
+      <p>Bidupur Bazar, Vaishali, Bihar - 844502</p>
+      <p>Mob: +91-7766086408 | GSTIN: 10ABCDE1234F1Z5</p>
     </div>
     <div class="receipt-details">
       <div><strong>Invoice #:</strong> ${inv.id}</div>
@@ -357,20 +363,20 @@ function viewInvoiceReceipt(id) {
           <tr>
             <td>${item.name}</td>
             <td>${item.quantity}</td>
-            <td>$${item.unitPrice.toFixed(2)}</td>
-            <td>$${item.total.toFixed(2)}</td>
+            <td>₹${item.unitPrice.toFixed(2)}</td>
+            <td>₹${item.total.toFixed(2)}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>
     <div class="receipt-summary">
-      <div class="receipt-row"><span>Subtotal:</span> <span>$${inv.subtotal.toFixed(2)}</span></div>
-      <div class="receipt-row"><span>Tax (${inv.taxRate}%):</span> <span>+$${inv.taxAmount.toFixed(2)}</span></div>
-      <div class="receipt-row"><span>Discount (${inv.discountRate}%):</span> <span>-$${inv.discountAmount.toFixed(2)}</span></div>
-      <div class="receipt-row grand"><span>GRAND TOTAL:</span> <span>$${inv.grandTotal.toFixed(2)}</span></div>
+      <div class="receipt-row"><span>Subtotal:</span> <span>₹${inv.subtotal.toFixed(2)}</span></div>
+      <div class="receipt-row"><span>GST (${inv.taxRate}%):</span> <span>+₹${inv.taxAmount.toFixed(2)}</span></div>
+      <div class="receipt-row"><span>Discount (${inv.discountRate}%):</span> <span>-₹${inv.discountAmount.toFixed(2)}</span></div>
+      <div class="receipt-row grand"><span>GRAND TOTAL:</span> <span>₹${inv.grandTotal.toFixed(2)}</span></div>
     </div>
     <div style="text-align: center; margin-top: 20px; font-size: 0.78rem; color: #64748b;">
-      Thank you for choosing Swastik Medical Store! Get well soon.
+      Thank you for visiting Swastik Medical Store! Get well soon.
     </div>
   `;
 
@@ -391,7 +397,7 @@ function switchTab(tabId) {
 
   const titleMap = {
     'dashboard': 'Executive Dashboard',
-    'inventory': 'Inventory Management',
+    'inventory': 'Medicine Inventory',
     'suppliers': 'Supplier Directory',
     'sales': 'Sales & Invoicing',
     'reports': 'Analytics & Financial Reports'
