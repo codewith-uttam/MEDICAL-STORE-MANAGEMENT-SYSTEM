@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaCare Pro - Medical Store Management System</title>
+  <meta name="description" content="Comprehensive Medical Store & Pharmacy Inventory Management System built with modern web technologies.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">💊</div>
+      <div>
+        <div class="brand-title">PharmaCare Pro</div>
+        <div class="brand-subtitle">Medical Store v2.5</div>
+      </div>
+    </div>
+    
+    <nav class="nav-menu">
+      <a href="#" class="nav-item active" data-tab="dashboard">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="inventory">
+        <span class="nav-icon">💊</span>
+        <span>Medicine Inventory</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="suppliers">
+        <span class="nav-icon">🚚</span>
+        <span>Suppliers</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="sales">
+        <span class="nav-icon">🧾</span>
+        <span>Sales & Invoices</span>
+      </a>
+      <a href="#" class="nav-item" data-tab="reports">
+        <span class="nav-icon">📈</span>
+        <span>Financial Reports</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div>System Status: <span style="color: var(--accent-green); font-weight: 600;">● Online</span></div>
+      <div style="margin-top: 4px;">LocalStorage Synced</div>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <main class="main-wrapper">
+    <!-- Top Header Bar -->
+    <header class="top-bar">
+      <h1 id="page-title" class="page-header-title">Executive Dashboard</h1>
+      
+      <div class="header-actions">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search" placeholder="Search medicines, suppliers, invoices...">
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-add-medicine')">+ Add Medicine</button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="content-container">
+      
+      <!-- TAB 1: EXECUTIVE DASHBOARD -->
+      <section id="tab-dashboard" class="tab-panel active">
+        <!-- Metric Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon-box blue">💊</div>
+            <div class="metric-info">
+              <span class="metric-label">Total Medicines</span>
+              <span id="metric-total-meds" class="metric-value">0</span>
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-icon-box yellow">⚠️</div>
+            <div class="metric-info">
+              <span class="metric-label">Low Stock Alerts (&lt;10)</span>
+              <span id="metric-low-stock" class="metric-value">0</span>
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-icon-box red">⏳</div>
+            <div class="metric-info">
+              <span class="metric-label">Expired / Expiring Soon</span>
+              <span id="metric-expired" class="metric-value">0</span>
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-icon-box purple">🚚</div>
+            <div class="metric-info">
+              <span class="metric-label">Active Suppliers</span>
+              <span id="metric-total-suppliers" class="metric-value">0</span>
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-icon-box green">💰</div>
+            <div class="metric-info">
+              <span class="metric-label">Total Gross Sales</span>
+              <span id="metric-total-sales" class="metric-value">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inventory Preview Table -->
+        <div class="section-action-header">
+          <h2 class="section-title">Critical Inventory Overview</h2>
+          <button class="btn btn-secondary" onclick="switchTab('inventory')">View All Medicines →</button>
+        </div>
+
+        <div class="card-table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Medicine Name & Generic</th>
+                <th>Category</th>
+                <th>Batch</th>
+                <th>Expiry</th>
+                <th>Buy Price</th>
+                <th>Sell Price</th>
+                <th>Qty</th>
+                <th>Rack</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 2: MEDICINE INVENTORY -->
+      <section id="tab-inventory" class="tab-panel">
+        <div class="section-action-header">
+          <h2 class="section-title">Medicine Catalog & Stock Control</h2>
+          <div class="filter-group">
+            <select id="inventory-filter-select" class="btn btn-secondary" style="padding: 9px 14px;">
+              <option value="all">All Medicines</option>
+              <option value="low-stock">Low Stock Only (&lt;10)</option>
+              <option value="expired">Expired Only</option>
+              <option value="expiring-soon">Expiring Soon (&lt;90 days)</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('modal-add-medicine')">+ Add Medicine</button>
+          </div>
+        </div>
+
+        <div class="card-table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Medicine Name & Generic</th>
+                <th>Category</th>
+                <th>Batch</th>
+                <th>Expiry Date</th>
+                <th>Cost Price</th>
+                <th>Retail Price</th>
+                <th>Stock Qty</th>
+                <th>Location</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-tbody-catalog">
+              <!-- Shared renderer with inventory-tbody -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: SUPPLIERS -->
+      <section id="tab-suppliers" class="tab-panel">
+        <div class="section-action-header">
+          <h2 class="section-title">Pharmaceutical Supplier Directory</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-add-supplier')">+ Add Supplier</button>
+        </div>
+
+        <div class="card-table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Supplier ID</th>
+                <th>Company Name</th>
+                <th>Contact Person</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="suppliers-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: SALES & INVOICES -->
+      <section id="tab-sales" class="tab-panel">
+        <div class="section-action-header">
+          <h2 class="section-title">Recent Sales Invoices</h2>
+        </div>
+
+        <div class="card-table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Date & Time</th>
+                <th>Customer Info</th>
+                <th>Doctor</th>
+                <th>Item Count</th>
+                <th>Grand Total</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+            <tbody id="invoices-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: FINANCIAL REPORTS -->
+      <section id="tab-reports" class="tab-panel">
+        <div class="section-action-header">
+          <h2 class="section-title">Financial & Inventory Analytics</h2>
+        </div>
+
+        <div id="report-analytics-container">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL 1: ADD MEDICINE -->
+  <div id="modal-add-medicine" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Medicine</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-medicine')">&times;</button>
+      </div>
+      <form id="form-add-medicine">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Trade Name *</label>
+              <input type="text" id="med-name" required placeholder="e.g. Amoxicillin 500mg">
+            </div>
+            <div class="form-group">
+              <label>Generic Name *</label>
+              <input type="text" id="med-generic" required placeholder="e.g. Amoxicillin">
+            </div>
+            <div class="form-group">
+              <label>Form / Category *</label>
+              <select id="med-category" required>
+                <option value="Tablet">Tablet</option>
+                <option value="Capsule">Capsule</option>
+                <option value="Syrup">Syrup</option>
+                <option value="Injection">Injection</option>
+                <option value="Ointment">Ointment</option>
+                <option value="Drops">Drops</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Supplier *</label>
+              <select id="med-supplier" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Batch Number *</label>
+              <input type="text" id="med-batch" required placeholder="e.g. BAT2026A">
+            </div>
+            <div class="form-group">
+              <label>Rack Location</label>
+              <input type="text" id="med-rack" placeholder="e.g. Rack A-01">
+            </div>
+            <div class="form-group">
+              <label>Purchase Date *</label>
+              <input type="date" id="med-pdate" required>
+            </div>
+            <div class="form-group">
+              <label>Expiry Date *</label>
+              <input type="date" id="med-edate" required>
+            </div>
+            <div class="form-group">
+              <label>Purchase Price ($) *</label>
+              <input type="number" step="0.01" id="med-pprice" required placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label>Selling Price ($) *</label>
+              <input type="number" step="0.01" id="med-sprice" required placeholder="0.00">
+            </div>
+            <div class="form-group full">
+              <label>Stock Quantity *</label>
+              <input type="number" id="med-qty" required placeholder="100">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-medicine')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Medicine</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD SUPPLIER -->
+  <div id="modal-add-supplier" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Supplier</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-supplier')">&times;</button>
+      </div>
+      <form id="form-add-supplier">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Company Name *</label>
+              <input type="text" id="sup-name" required placeholder="e.g. Apex Pharma Solutions">
+            </div>
+            <div class="form-group">
+              <label>Contact Person *</label>
+              <input type="text" id="sup-contact" required placeholder="e.g. Robert Jenkins">
+            </div>
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" id="sup-phone" required placeholder="+1-555-0142">
+            </div>
+            <div class="form-group full">
+              <label>Email Address</label>
+              <input type="email" id="sup-email" placeholder="orders@apexpharma.com">
+            </div>
+            <div class="form-group full">
+              <label>Physical Address</label>
+              <input type="text" id="sup-address" placeholder="45 Industrial Pkwy, Boston, MA">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-supplier')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Supplier</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: RECEIPT VIEWER -->
+  <div id="modal-view-receipt" class="modal-overlay">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Sales Invoice Receipt</h3>
+        <button class="modal-close" onclick="closeModal('modal-view-receipt')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="receipt-content-box" class="receipt-box">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ Print Receipt</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('modal-view-receipt')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>
