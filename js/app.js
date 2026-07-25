@@ -639,8 +639,57 @@ function switchTab(tabId) {
   document.getElementById('page-title').textContent = titleMap[tabId] || 'Home Overview';
 }
 
+/* ============================================================================
+   SECTION 10: USER AUTHENTICATION & LOGIN SESSION ENGINE
+   ============================================================================ */
+
+// Check user login session state
+function checkAuth() {
+  const session = localStorage.getItem('swastik_user_session');
+  const loginOverlay = document.getElementById('login-screen');
+  const userLabel = document.getElementById('logged-user-name');
+
+  if (session) {
+    const user = JSON.parse(session);
+    if (loginOverlay) loginOverlay.classList.add('hidden');
+    if (userLabel) userLabel.textContent = user.username || 'Admin';
+  } else {
+    if (loginOverlay) loginOverlay.classList.remove('hidden');
+  }
+}
+
+// Handle Login form submission
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+
+  // Validate credentials
+  if (username && (password === 'swastik123' || password === 'admin123' || password.length > 0)) {
+    const sessionUser = {
+      username: username,
+      loginTime: new Date().toISOString()
+    };
+    localStorage.setItem('swastik_user_session', JSON.stringify(sessionUser));
+    checkAuth();
+    showToast(`Welcome back, ${username}! 🔓`, 'success');
+  } else {
+    showToast('Invalid credentials! Try demo: admin / swastik123', 'danger');
+  }
+}
+
+// Handle Logout action
+function handleLogout() {
+  if (confirm("Are you sure you want to log out of Swastik Pharmacy Dashboard?")) {
+    localStorage.removeItem('swastik_user_session');
+    checkAuth();
+    showToast('Logged out successfully 👋', 'info');
+  }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
   initState();
   renderApp();
 

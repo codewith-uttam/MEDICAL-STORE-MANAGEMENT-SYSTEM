@@ -26,6 +26,41 @@
 <body>
 
   <!-- =========================================================================
+       LOGIN SCREEN OVERLAY (AUTHENTICATION)
+       ========================================================================= -->
+  <div id="login-screen" class="login-screen-overlay">
+    <div class="login-card">
+      <div class="login-card-header">
+        <div class="logo-icon">🏥</div>
+        <h2>Swastik Pharmacy</h2>
+        <p>Bidupur Bazar, Vaishali | Store Management Portal</p>
+      </div>
+      <form id="form-login" onsubmit="handleLoginSubmit(event)">
+        <div class="login-card-body">
+          <div class="login-credential-hint">
+            <strong>🔑 Demo Credentials:</strong><br>
+            Username: <code>admin</code> | Password: <code>swastik123</code>
+          </div>
+
+          <div class="form-group">
+            <label>Username / Email *</label>
+            <input type="text" id="login-username" required placeholder="Enter username (e.g. admin)" value="admin">
+          </div>
+
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" id="login-password" required placeholder="Enter password (e.g. swastik123)" value="swastik123">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem; margin-top: 10px;">
+            🔓 Sign In to Dashboard
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
        SIDEBAR NAVIGATION BAR
        ========================================================================= -->
   <aside class="sidebar">
@@ -85,6 +120,13 @@
         </div>
         <button class="btn btn-secondary" onclick="switchTab('sales')" style="background-color: var(--accent-green-bg); color: var(--accent-green); border-color: rgba(16, 185, 129, 0.3);">⚡ + New Bill / Sale</button>
         <button class="btn btn-primary" onclick="openModal('modal-add-medicine')">💊 + Add New Medicine</button>
+        
+        <!-- User Profile Chip & Logout Button -->
+        <div class="user-profile-chip">
+          <span>👤</span>
+          <span id="logged-user-name">Admin</span>
+        </div>
+        <button class="btn btn-secondary" onclick="handleLogout()" style="padding: 8px 12px; font-size: 0.8rem; background-color: rgba(239, 68, 68, 0.2); color: #FF8A8A; border-color: rgba(239, 68, 68, 0.4);">🚪 Logout</button>
       </div>
     </header>
 
