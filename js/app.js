@@ -333,9 +333,9 @@ function viewInvoiceReceipt(id) {
   const container = document.getElementById('receipt-content-box');
   container.innerHTML = `
     <div class="receipt-header">
-      <h2>PHARMACARE PRO</h2>
+      <h2>SWASTIK MEDICAL STORE</h2>
       <p>100 Health Avenue, Suite 400</p>
-      <p>Tel: +1-800-PHARMA-CARE</p>
+      <p>Tel: +1-800-SWASTIK-MED</p>
     </div>
     <div class="receipt-details">
       <div><strong>Invoice #:</strong> ${inv.id}</div>
@@ -370,7 +370,7 @@ function viewInvoiceReceipt(id) {
       <div class="receipt-row grand"><span>GRAND TOTAL:</span> <span>$${inv.grandTotal.toFixed(2)}</span></div>
     </div>
     <div style="text-align: center; margin-top: 20px; font-size: 0.78rem; color: #64748b;">
-      Thank you for choosing PharmaCare Pro! Get well soon.
+      Thank you for choosing Swastik Medical Store! Get well soon.
     </div>
   `;
 
