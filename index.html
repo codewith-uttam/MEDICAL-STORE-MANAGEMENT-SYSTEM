@@ -111,7 +111,10 @@
   <main class="main-wrapper">
     <!-- Top Header Bar with Live Search & Fast Action Buttons -->
     <header class="top-bar">
-      <h1 id="page-title" class="page-header-title">Home Overview</h1>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        <h1 id="page-title" class="page-header-title">Home Overview</h1>
+      </div>
 
       <div class="header-actions">
         <div class="search-box">

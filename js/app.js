@@ -135,8 +135,9 @@ function renderMetrics() {
 
 // Render Medicine Inventory Table with search & filter logic
 function renderInventoryTable() {
-  const tbody = document.getElementById('inventory-tbody');
-  if (!tbody) return;
+  const tbodyDashboard = document.getElementById('inventory-tbody');
+  const tbodyCatalog = document.getElementById('inventory-tbody-catalog');
+  if (!tbodyDashboard && !tbodyCatalog) return;
 
   let filtered = state.medicines.filter(m => {
     const q = state.searchQuery.toLowerCase();
@@ -150,45 +151,48 @@ function renderInventoryTable() {
     return true;
   });
 
+  let htmlContent = '';
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">No medicines found matching criteria.</td></tr>`;
-    return;
+    htmlContent = `<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 30px;">No medicines found matching criteria.</td></tr>`;
+  } else {
+    htmlContent = filtered.map(m => {
+      const expired = isExpired(m.expiryDate);
+      const expiring = !expired && isExpiringSoon(m.expiryDate);
+      const lowStock = m.quantity < 10;
+
+      let statusBadge = `<span class="badge badge-success">In Stock</span>`;
+      if (expired) {
+        statusBadge = `<span class="badge badge-danger">Expired</span>`;
+      } else if (expiring) {
+        statusBadge = `<span class="badge badge-warning">Expiring Soon</span>`;
+      } else if (lowStock) {
+        statusBadge = `<span class="badge badge-danger">Low Stock (${m.quantity})</span>`;
+      }
+
+      return `
+        <tr>
+          <td><strong>${m.id}</strong></td>
+          <td>
+            <div style="font-weight: 700; color: var(--apollo-navy);">${m.name}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">${m.genericName}</div>
+          </td>
+          <td><span class="badge badge-info">${m.category}</span></td>
+          <td>${m.batchNumber}</td>
+          <td>${m.expiryDate} ${statusBadge}</td>
+          <td>${formatCurrency(m.purchasePrice)}</td>
+          <td><strong style="color: var(--primary);">${formatCurrency(m.sellingPrice)}</strong></td>
+          <td><strong style="color: ${lowStock ? 'var(--accent-red)' : 'inherit'};">${m.quantity}</strong></td>
+          <td>${m.rackLocation}</td>
+          <td>
+            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteMedicine('${m.id}')">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
-  tbody.innerHTML = filtered.map(m => {
-    const expired = isExpired(m.expiryDate);
-    const expiring = !expired && isExpiringSoon(m.expiryDate);
-    const lowStock = m.quantity < 10;
-
-    let statusBadge = `<span class="badge badge-success">In Stock</span>`;
-    if (expired) {
-      statusBadge = `<span class="badge badge-danger">Expired</span>`;
-    } else if (expiring) {
-      statusBadge = `<span class="badge badge-warning">Expiring Soon</span>`;
-    } else if (lowStock) {
-      statusBadge = `<span class="badge badge-danger">Low Stock (${m.quantity})</span>`;
-    }
-
-    return `
-      <tr>
-        <td><strong>${m.id}</strong></td>
-        <td>
-          <div style="font-weight: 700; color: var(--apollo-navy);">${m.name}</div>
-          <div style="font-size: 0.78rem; color: var(--text-muted);">${m.genericName}</div>
-        </td>
-        <td><span class="badge badge-info">${m.category}</span></td>
-        <td>${m.batchNumber}</td>
-        <td>${m.expiryDate} ${statusBadge}</td>
-        <td>${formatCurrency(m.purchasePrice)}</td>
-        <td><strong style="color: var(--primary);">${formatCurrency(m.sellingPrice)}</strong></td>
-        <td><strong style="color: ${lowStock ? 'var(--accent-red)' : 'inherit'};">${m.quantity}</strong></td>
-        <td>${m.rackLocation}</td>
-        <td>
-          <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.76rem;" onclick="deleteMedicine('${m.id}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+  if (tbodyDashboard) tbodyDashboard.innerHTML = htmlContent;
+  if (tbodyCatalog) tbodyCatalog.innerHTML = htmlContent;
 }
 
 // Render Wholesaler / Supplier Directory Table
@@ -618,6 +622,13 @@ function viewInvoiceReceipt(id) {
    SECTION 9: NAVIGATION & EVENT LISTENERS
    ============================================================================ */
 
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('open');
+  }
+}
+
 function switchTab(tabId) {
   state.activeTab = tabId;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -637,6 +648,12 @@ function switchTab(tabId) {
     'reports': 'Sales & Profit Reports'
   };
   document.getElementById('page-title').textContent = titleMap[tabId] || 'Home Overview';
+
+  // Close sidebar on mobile after navigation
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+  }
 }
 
 /* ============================================================================
